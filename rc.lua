@@ -165,8 +165,13 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+-- Update the volume bar and brightness bar on key presses
 local volume_bar_widget, volume_bar_timer = awful.widget.watch('bash -c "/home/sv/scripts/volume-bar.sh"', 3600)
-local brightness_bar_widget, brightness_bar_timer = awful.widget.watch('bash -c "/home/sv/scripts/brightness-bar.sh"', 3600)
+local brightness_bar_widget, brightness_bar_timer = awful.widget.watch('bash -c "/home/sv/scripts/brightness-bar.sh"',
+	3600)
+
+local file = io.popen("/home/sv/scripts/get-volume.sh", "r")
+local val = file:read("n")
 
 awful.screen.connect_for_each_screen(function(s)
 	-- Wallpaper
@@ -192,80 +197,6 @@ awful.screen.connect_for_each_screen(function(s)
 		filter  = awful.widget.taglist.filter.all,
 		buttons = taglist_buttons
 	}
-
-	-- Powerline example
-
-	--     s.mytaglist = awful.widget.taglist {
-	--         screen  = s,
-	--         filter  = awful.widget.taglist.filter.all,
-	--         style   = {
-	--             shape = gears.shape.powerline
-	--         },
-	--         layout   = {
-	--             spacing = -12,
-	--             spacing_widget = {
-	--                 color  = '#dddddd',
-	--                 shape  = gears.shape.powerline,
-	--                 widget = wibox.widget.separator,
-	--             },
-	--             layout  = wibox.layout.fixed.horizontal
-	--         },
-	--         widget_template = {
-	--             {
-	--                 {
-	--                     {
-	--                         {
-	--                             {
-	--                                 id     = 'index_role',
-	--                                 widget = wibox.widget.textbox,
-	--                             },
-	--                             margins = 4,
-	--                             widget  = wibox.container.margin,
-	--                         },
-	--                         bg     = '#dddddd',
-	--                         shape  = gears.shape.circle,
-	--                         widget = wibox.container.background,
-	--                     },
-	--                     {
-	--                         {
-	--                             id     = 'icon_role',
-	--                             widget = wibox.widget.imagebox,
-	--                         },
-	--                         margins = 2,
-	--                         widget  = wibox.container.margin,
-	--                     },
-	--                     {
-	--                         id     = 'text_role',
-	--                         widget = wibox.widget.textbox,
-	--                     },
-	--                     layout = wibox.layout.fixed.horizontal,
-	--                 },
-	--                 left  = 18,
-	--                 right = 18,
-	--                 widget = wibox.container.margin
-	--             },
-	--             id     = 'background_role',
-	--             widget = wibox.container.background,
-	--             -- Add support for hover colors and an index label
-	--             create_callback = function(self, c3, index, objects) --luacheck: no unused args
-	--                 self:get_children_by_id('index_role')[1].markup = '<b> '..index..' </b>'
-	--                 self:connect_signal('mouse::enter', function()
-	--                     if self.bg ~= '#ff0000' then
-	--                         self.backup     = self.bg
-	--                         self.has_backup = true
-	--                     end
-	--                     self.bg = '#ff0000'
-	--                 end)
-	--                 self:connect_signal('mouse::leave', function()
-	--                     if self.has_backup then self.bg = self.backup end
-	--                 end)
-	--             end,
-	--             update_callback = function(self, c3, index, objects) --luacheck: no unused args
-	--                 self:get_children_by_id('index_role')[1].markup = '<b> '..index..' </b>'
-	--             end,
-	--         },
-	--         buttons = taglist_buttons
-	--     }
 
 	-- Create a tasklist widget
 	--s.mytasklist = awful.widget.tasklist {
@@ -293,6 +224,19 @@ awful.screen.connect_for_each_screen(function(s)
 		},
 		{ -- Right widgets
 			layout = wibox.layout.fixed.horizontal,
+			--wibox.widget {
+			--	max_value        = 1,
+			--	value            = val,
+			--	margins          = 8,
+			--	forced_height    = 20,
+			--	forced_width     = 100,
+			--	shape            = gears.shape.rounded_bar,
+			--	border_width     = 0,
+			--	border_color     = beautiful.border_color,
+			--	color            = "#cdd6f4",
+			--	background_color = "#45475a",
+			--	widget           = wibox.widget.progressbar,
+			--},
 			wibox.widget.textbox(' '),
 			mykeyboardlayout,
 			--wibox.widget.systray(),
@@ -415,9 +359,9 @@ globalkeys = gears.table.join(
 		{ description = "increase the number of columns", group = "layout" }),
 	awful.key({ modkey, "Control" }, "l", function() awful.tag.incncol(-1, nil, true) end,
 		{ description = "decrease the number of columns", group = "layout" }),
-	awful.key({ modkey, }, "space", function() awful.layout.inc(1) end,
+	awful.key({ modkey, }, "m", function() awful.layout.inc(1) end,
 		{ description = "select next", group = "layout" }),
-	awful.key({ modkey, "Shift" }, "space", function() awful.layout.inc(-1) end,
+	awful.key({ modkey, "Shift" }, "m", function() awful.layout.inc(-1) end,
 		{ description = "select previous", group = "layout" }),
 
 	awful.key({ modkey, "Control" }, "n",
@@ -455,11 +399,11 @@ globalkeys = gears.table.join(
 	--{ description = "show Dmenu", group = "launcher" }))
 
 	-- Rofi
-	awful.key({ modkey }, "p", function() awful.spawn("rofi -show combi") end,
+	awful.key({ modkey }, "space", function() awful.spawn("rofi -show combi") end,
 		{ description = "show rofi", group = "launcher" }),
 
 	-- Rofi Calc
-	awful.key({ modkey, "Shift" }, "p", function() awful.spawn("rofi -show calc -modi calc -no-show-match -no-sort") end,
+	awful.key({ modkey, "Shift" }, "c", function() awful.spawn("rofi -show calc -modi calc -no-show-match -no-sort") end,
 		{ description = "show rofi", group = "launcher" }),
 
 
@@ -467,96 +411,96 @@ globalkeys = gears.table.join(
 	-- Brightness up
 	awful.key({}, "XF86MonBrightnessUp",
 		function()
-			local brightness = [[/home/sv/scripts/brightness-bar.sh]]
+			--local brightness = [[/home/sv/scripts/brightness-bar.sh]]
 			awful.spawn("/home/sv/scripts/brightness-up.sh")
 			brightness_bar_timer:emit_signal("timeout")
-			awful.spawn.easy_async(brightness, function(stdout)
-				naughty.notify {
-					--title = "Brightness",
-					text = "  " .. stdout,
-					font = "Roboto Mono Nerd Font 12",
-					replaces_id = 1,
-					--border_width = 3,
-					--border_color = "#89b4fa",
-					width = 170,
-					height = 25,
-					shape = function(cr, width, heigt)
-						gears.shape.rounded_rect(cr, width, heigt, 5)
-					end
-				}
-			end)
+			--awful.spawn.easy_async(brightness, function(stdout)
+			--	naughty.notify {
+			--		--title = "Brightness",
+			--		text = "  " .. stdout,
+			--		font = "Roboto Mono Nerd Font 12",
+			--		replaces_id = 1,
+			--		--border_width = 3,
+			--		--border_color = "#89b4fa",
+			--		width = 170,
+			--		height = 25,
+			--		shape = function(cr, width, heigt)
+			--			gears.shape.rounded_rect(cr, width, heigt, 5)
+			--		end
+			--	}
+			--end)
 		end,
 		{ description = "Brightness up", group = "system" }),
 
 	-- Brightness down
 	awful.key({}, "XF86MonBrightnessDown",
 		function()
-			local brightness = [[/home/sv/scripts/brightness-bar.sh]]
+			--local brightness = [[/home/sv/scripts/brightness-bar.sh]]
 			awful.spawn("/home/sv/scripts/brightness-down.sh")
 			brightness_bar_timer:emit_signal("timeout")
-			awful.spawn.easy_async(brightness, function(stdout)
-				naughty.notify {
-					--title = "Brightness",
-					text = "  " .. stdout,
-					font = "Roboto Mono Nerd Font 12",
-					replaces_id = 1,
-					--border_width = 3,
-					--border_color = "#89b4fa",
-					width = 170,
-					height = 25,
-					shape = function(cr, width, heigt)
-						gears.shape.rounded_rect(cr, width, heigt, 5)
-					end
-				}
-			end)
+			--awful.spawn.easy_async(brightness, function(stdout)
+			--	naughty.notify {
+			--		--title = "Brightness",
+			--		text = "  " .. stdout,
+			--		font = "Roboto Mono Nerd Font 12",
+			--		replaces_id = 1,
+			--		--border_width = 3,
+			--		--border_color = "#89b4fa",
+			--		width = 170,
+			--		height = 25,
+			--		shape = function(cr, width, heigt)
+			--			gears.shape.rounded_rect(cr, width, heigt, 5)
+			--		end
+			--	}
+			--end)
 		end,
 		{ description = "Brightness down", group = "system" }),
 
 	-- Volume up
 	awful.key({}, "XF86AudioRaiseVolume",
 		function()
-			local volume = [[/home/sv/scripts/volume-bar.sh]]
+			--local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
 			volume_bar_timer:emit_signal("timeout")
-			awful.spawn.easy_async(volume, function(stdout)
-				naughty.notify {
-					--title = "Brightness",
-					text = "   " .. stdout,
-					font = "Roboto Mono Nerd Font 12",
-					replaces_id = 1,
-					--border_width = 3,
-					--border_color = "#89b4fa",
-					width = 170,
-					height = 25,
-					shape = function(cr, width, heigt)
-						gears.shape.rounded_rect(cr, width, heigt, 5)
-					end
-				}
-			end)
+			--awful.spawn.easy_async(volume, function(stdout)
+			--	naughty.notify {
+			--		--title = "Brightness",
+			--		text = "   " .. stdout,
+			--		font = "Roboto Mono Nerd Font 12",
+			--		replaces_id = 1,
+			--		--border_width = 3,
+			--		--border_color = "#89b4fa",
+			--		width = 170,
+			--		height = 25,
+			--		shape = function(cr, width, heigt)
+			--			gears.shape.rounded_rect(cr, width, heigt, 5)
+			--		end
+			--	}
+			--end)
 		end,
 		{ description = "Brightness up", group = "system" }),
 
 	-- Volume down
 	awful.key({}, "XF86AudioLowerVolume",
 		function()
-			local volume = [[/home/sv/scripts/volume-bar.sh]]
+			--local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
 			volume_bar_timer:emit_signal("timeout")
-			awful.spawn.easy_async(volume, function(stdout)
-				naughty.notify {
-					--title = "Brightness",
-					text = "   " .. stdout,
-					font = "Roboto Mono Nerd Font 12",
-					replaces_id = 1,
-					--border_width = 3,
-					--border_color = "#89b4fa",
-					width = 170,
-					height = 25,
-					shape = function(cr, width, heigt)
-						gears.shape.rounded_rect(cr, width, heigt, 5)
-					end
-				}
-			end)
+			--awful.spawn.easy_async(volume, function(stdout)
+			--	naughty.notify {
+			--		--title = "Brightness",
+			--		text = "   " .. stdout,
+			--		font = "Roboto Mono Nerd Font 12",
+			--		replaces_id = 1,
+			--		--border_width = 3,
+			--		--border_color = "#89b4fa",
+			--		width = 170,
+			--		height = 25,
+			--		shape = function(cr, width, heigt)
+			--			gears.shape.rounded_rect(cr, width, heigt, 5)
+			--		end
+			--	}
+			--end)
 		end,
 		{ description = "Brightness down", group = "system" })
 
@@ -569,7 +513,7 @@ clientkeys = gears.table.join(
 			c:raise()
 		end,
 		{ description = "toggle fullscreen", group = "client" }),
-	awful.key({ modkey, "Shift" }, "c", function(c) c:kill() end,
+	awful.key({ modkey }, "c", function(c) c:kill() end,
 		{ description = "close", group = "client" }),
 	awful.key({ modkey, "Control" }, "space", awful.client.floating.toggle,
 		{ description = "toggle floating", group = "client" }),
@@ -585,25 +529,27 @@ clientkeys = gears.table.join(
 			-- minimized, since minimized clients can't have the focus.
 			c.minimized = true
 		end,
-		{ description = "minimize", group = "client" }),
-	awful.key({ modkey, }, "m",
-		function(c)
-			c.maximized = not c.maximized
-			c:raise()
-		end,
-		{ description = "(un)maximize", group = "client" }),
-	awful.key({ modkey, "Control" }, "m",
-		function(c)
-			c.maximized_vertical = not c.maximized_vertical
-			c:raise()
-		end,
-		{ description = "(un)maximize vertically", group = "client" }),
-	awful.key({ modkey, "Shift" }, "m",
-		function(c)
-			c.maximized_horizontal = not c.maximized_horizontal
-			c:raise()
-		end,
-		{ description = "(un)maximize horizontally", group = "client" })
+		{ description = "minimize", group = "client" })
+--awful.key({ modkey, }, "m",
+--	function(c)
+--		c.maximized = not c.maximized
+--		c:raise()
+--	end,
+--	{ description = "(un)maximize", group = "client" }),
+--awful.key({ modkey, }, "m",
+--	{ description = "Toggle modes", group = "client" }),
+--awful.key({ modkey, "Control" }, "m",
+--	function(c)
+--		c.maximized_vertical = not c.maximized_vertical
+--		c:raise()
+--	end,
+--	{ description = "(un)maximize vertically", group = "client" }),
+--awful.key({ modkey, "Shift" }, "m",
+--	function(c)
+--		c.maximized_horizontal = not c.maximized_horizontal
+--		c:raise()
+--	end,
+--	{ description = "(un)maximize horizontally", group = "client" })
 )
 
 -- Bind all key numbers to tags.
