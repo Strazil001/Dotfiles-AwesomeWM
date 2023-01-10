@@ -18,7 +18,7 @@ local themes_path = gfs.get_themes_dir()
 local theme = {}
 
 theme.font          = "Roboto Mono Nerd Font 9"
-theme.taglist_font  = "Roboto Mono Nerd Font 12"
+theme.taglist_font  = "Roboto Mono Nerd Font 11"
 
 theme.bg_normal     = "#1e2030"
 theme.bg_focus      = "#1e2030"
@@ -31,7 +31,7 @@ theme.fg_focus      = "#89b4fa"
 theme.fg_urgent     = "#ed8796"
 theme.fg_minimize   = "#ffffff"
 
-theme.useless_gap   = dpi(5)
+theme.useless_gap   = dpi(6)
 theme.border_width  = dpi(3)
 theme.border_normal = "#313244"
 theme.border_focus  = "#89b4fa"

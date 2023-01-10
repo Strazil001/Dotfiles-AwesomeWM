@@ -165,6 +165,9 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+local volume_bar_widget, volume_bar_timer = awful.widget.watch('bash -c "/home/sv/scripts/volume-bar.sh"', 3600)
+local brightness_bar_widget, brightness_bar_timer = awful.widget.watch('bash -c "/home/sv/scripts/brightness-bar.sh"', 3600)
+
 awful.screen.connect_for_each_screen(function(s)
 	-- Wallpaper
 	set_wallpaper(s)
@@ -272,7 +275,7 @@ awful.screen.connect_for_each_screen(function(s)
 	--}
 
 	-- Create the wibox
-	s.mywibox = awful.wibar({ position = "top", screen = s })
+	s.mywibox = awful.wibar({ position = "top", height = 24, screen = s })
 
 	-- Add widgets to the wibox
 	s.mywibox:setup {
@@ -299,7 +302,7 @@ awful.screen.connect_for_each_screen(function(s)
 			awful.widget.watch('bash -c "df -h | awk \'NR==4 {print $4}\'"', 3600),
 			wibox.widget.textbox('  '),
 			wibox.widget.textbox('/ '),
-			awful.widget.watch('bash -c "df -h | awk \'NR==6 {print $4}\'"', 3600),
+			awful.widget.watch('/home/sv/scripts/disk-usage.sh', 3600),
 			wibox.widget.textbox(' '),
 			wibox.widget.textbox('  '),
 			awful.widget.watch('bash -c "free -m | awk \'/Mem/{print $3}\'"', 1),
@@ -315,6 +318,12 @@ awful.screen.connect_for_each_screen(function(s)
 			wibox.widget.textbox('  '),
 			awful.widget.watch('bash -c "cat /sys/class/power_supply/BAT1/capacity"', 60),
 			wibox.widget.textbox('%'),
+			wibox.widget.textbox('  '),
+			wibox.widget.textbox(' '),
+			brightness_bar_widget,
+			wibox.widget.textbox('  '),
+			wibox.widget.textbox(' '),
+			volume_bar_widget,
 			wibox.widget.textbox(' '),
 			mytextclock,
 			wibox.widget.textbox(' '),
@@ -383,9 +392,11 @@ globalkeys = gears.table.join(
 		{ description = "open a terminal", group = "launcher" }),
 	awful.key({ modkey, }, "b", function() awful.spawn("qutebrowser") end,
 		{ description = "open qutebrowser", group = "launcher" }),
-	awful.key({ modkey }, "s", function() awful.spawn("scrot -q 100 -d 3 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png") end,
+	awful.key({ modkey }, "s",
+		function() awful.spawn("scrot -q 100 -d 3 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png") end,
 		{ description = "Take screenshot fullscreen", group = "screen" }),
-	awful.key({ modkey, "Shift" }, "s", function() awful.spawn("scrot -s -q 100 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png") end,
+	awful.key({ modkey, "Shift" }, "s",
+		function() awful.spawn("scrot -s -q 100 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png") end,
 		{ description = "Take screenshot selection", group = "screen" }),
 	awful.key({ modkey, "Control" }, "r", awesome.restart,
 		{ description = "reload awesome", group = "awesome" }),
@@ -456,17 +467,18 @@ globalkeys = gears.table.join(
 	-- Brightness up
 	awful.key({}, "XF86MonBrightnessUp",
 		function()
+			local brightness = [[/home/sv/scripts/brightness-bar.sh]]
 			awful.spawn("/home/sv/scripts/brightness-up.sh")
-			local brightness = [[/home/sv/scripts/get-brightness.sh]]
+			brightness_bar_timer:emit_signal("timeout")
 			awful.spawn.easy_async(brightness, function(stdout)
 				naughty.notify {
 					--title = "Brightness",
 					text = "  " .. stdout,
-					font = "Roboto Mono Nerd Font 10",
+					font = "Roboto Mono Nerd Font 12",
 					replaces_id = 1,
 					--border_width = 3,
 					--border_color = "#89b4fa",
-					width = 80,
+					width = 170,
 					height = 25,
 					shape = function(cr, width, heigt)
 						gears.shape.rounded_rect(cr, width, heigt, 5)
@@ -479,17 +491,18 @@ globalkeys = gears.table.join(
 	-- Brightness down
 	awful.key({}, "XF86MonBrightnessDown",
 		function()
+			local brightness = [[/home/sv/scripts/brightness-bar.sh]]
 			awful.spawn("/home/sv/scripts/brightness-down.sh")
-			local brightness = [[/home/sv/scripts/get-brightness.sh]]
+			brightness_bar_timer:emit_signal("timeout")
 			awful.spawn.easy_async(brightness, function(stdout)
 				naughty.notify {
 					--title = "Brightness",
 					text = "  " .. stdout,
-					font = "Roboto Mono Nerd Font 10",
+					font = "Roboto Mono Nerd Font 12",
 					replaces_id = 1,
 					--border_width = 3,
 					--border_color = "#89b4fa",
-					width = 80,
+					width = 170,
 					height = 25,
 					shape = function(cr, width, heigt)
 						gears.shape.rounded_rect(cr, width, heigt, 5)
@@ -502,17 +515,18 @@ globalkeys = gears.table.join(
 	-- Volume up
 	awful.key({}, "XF86AudioRaiseVolume",
 		function()
+			local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
-			local volume = [[/home/sv/scripts/get-volume.sh]]
+			volume_bar_timer:emit_signal("timeout")
 			awful.spawn.easy_async(volume, function(stdout)
 				naughty.notify {
 					--title = "Brightness",
 					text = "   " .. stdout,
-					font = "Roboto Mono Nerd Font 10",
+					font = "Roboto Mono Nerd Font 12",
 					replaces_id = 1,
 					--border_width = 3,
 					--border_color = "#89b4fa",
-					width = 80,
+					width = 170,
 					height = 25,
 					shape = function(cr, width, heigt)
 						gears.shape.rounded_rect(cr, width, heigt, 5)
@@ -525,17 +539,18 @@ globalkeys = gears.table.join(
 	-- Volume down
 	awful.key({}, "XF86AudioLowerVolume",
 		function()
+			local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
-			local volume = [[/home/sv/scripts/get-volume.sh]]
+			volume_bar_timer:emit_signal("timeout")
 			awful.spawn.easy_async(volume, function(stdout)
 				naughty.notify {
 					--title = "Brightness",
 					text = "   " .. stdout,
-					font = "Roboto Mono Nerd Font 10",
+					font = "Roboto Mono Nerd Font 12",
 					replaces_id = 1,
 					--border_width = 3,
 					--border_color = "#89b4fa",
-					width = 80,
+					width = 170,
 					height = 25,
 					shape = function(cr, width, heigt)
 						gears.shape.rounded_rect(cr, width, heigt, 5)
