@@ -12,4 +12,4 @@ I have an AMD Cpu, internal AMD Gpu and an NVIDIA RTX Gpu,
 I control my brightness with /sys/class/backlight/amdgpu_bl1 or amdgpu_bl0.
 Yours might be different, same goes for storage etc but you get the point.
 
-### Enoy
+### Enjoy
