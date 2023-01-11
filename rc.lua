@@ -170,8 +170,79 @@ local volume_bar_widget, volume_bar_timer = awful.widget.watch('bash -c "/home/s
 local brightness_bar_widget, brightness_bar_timer = awful.widget.watch('bash -c "/home/sv/scripts/brightness-bar.sh"',
 	3600)
 
-local file = io.popen("/home/sv/scripts/get-volume.sh", "r")
-local val = file:read("n")
+-- Cutom Widgets
+---------------------------------
+
+-- Memory progressbar widget
+local memory_progressbar = wibox.widget {
+	max_value        = 16000,
+	value            = 0, -- very hugly -- minimum value to handle to make it look good
+	margins          = 8,
+	forced_width     = 60,
+	shape            = gears.shape.rounded_bar,
+	border_width     = 0,
+	border_color     = beautiful.border_color,
+	color            = "#cdd6f4",
+	background_color = "#45475a",
+	widget           = wibox.widget.progressbar,
+}
+
+local update_memory_widget = function(mem)
+	memory_progressbar.value = mem
+end
+
+awful.widget.watch('bash -c "free -m | awk \'/Mem/{print $3}\'"', 1, function(self, stdout)
+	local mem = tonumber(stdout)
+	update_memory_widget(mem)
+end)
+
+-- Cpu progressbar widget
+local cpu_progressbar = wibox.widget {
+	max_value        = 100,
+	value            = 0, -- very hugly -- minimum value to handle to make it look good
+	margins          = 8,
+	forced_width     = 60,
+	shape            = gears.shape.rounded_bar,
+	border_width     = 0,
+	border_color     = beautiful.border_color,
+	color            = "#cdd6f4",
+	background_color = "#45475a",
+	widget           = wibox.widget.progressbar,
+}
+
+local update_cpu_widget = function(cpu)
+	cpu_progressbar.value = cpu
+end
+
+awful.widget.watch('bash -c "top -bn1 | awk \'/Cpu/ {print $2}\'"', 1, function(self, stdout)
+	local cpu = tonumber(stdout)
+	update_cpu_widget(cpu)
+end)
+
+-- Cpu graph widget
+--local cpu_graph = wibox.widget {
+--	max_value        = 5.0,
+--	min_value        = 0.0,
+--	scale = true,
+--	step_spacing     = 1,
+--	step_shape       = function(cr, width, height)
+--		gears.shape.rounded_rect(cr, width, height, 2)
+--	end,
+--	forced_height    = 10,
+--	forced_width     = 100,
+--	color            = "#cdd6f4",
+--	background_color = "#45475a",
+--	widget           = wibox.widget.graph,
+--}
+--
+--local update_cpu_graph = function(cpu)
+--	cpu_graph.min_value = cpu
+--end
+--
+--awful.widget.watch('bash -c "top -bn1 | awk \'/Cpu/ {print $2}\'"', 1, function(self, stdout)
+--	local cpu = tonumber(stdout)
+--	update_cpu_graph(cpu)
+--end)
 
 awful.screen.connect_for_each_screen(function(s)
 	-- Wallpaper
@@ -224,50 +295,36 @@ awful.screen.connect_for_each_screen(function(s)
 		},
 		{ -- Right widgets
 			layout = wibox.layout.fixed.horizontal,
-			--wibox.widget {
-			--	max_value        = 1,
-			--	value            = val,
-			--	margins          = 8,
-			--	forced_height    = 20,
-			--	forced_width     = 100,
-			--	shape            = gears.shape.rounded_bar,
-			--	border_width     = 0,
-			--	border_color     = beautiful.border_color,
-			--	color            = "#cdd6f4",
-			--	background_color = "#45475a",
-			--	widget           = wibox.widget.progressbar,
-			--},
-			wibox.widget.textbox(' '),
-			mykeyboardlayout,
-			--wibox.widget.systray(),
-			wibox.widget.textbox(' '),
-			wibox.widget.textbox(' /'),
-			wibox.widget.textbox(''),
-			awful.widget.watch('bash -c "df -h | awk \'NR==4 {print $4}\'"', 3600),
-			wibox.widget.textbox('  '),
-			wibox.widget.textbox('/ '),
-			awful.widget.watch('/home/sv/scripts/disk-usage.sh', 3600),
-			wibox.widget.textbox(' '),
 			wibox.widget.textbox('  '),
-			awful.widget.watch('bash -c "free -m | awk \'/Mem/{print $3}\'"', 1),
-			wibox.widget.textbox('MB'),
-			wibox.widget.textbox(' '),
+			memory_progressbar,
+			wibox.widget.textbox(''),
 			wibox.widget.textbox('  '),
-			awful.widget.watch('bash -c "top -bn1 | awk \'/Cpu/ {print $2}\'"', 1),
-			wibox.widget.textbox('%'),
+			cpu_progressbar,
+			--cpu_graph,
 			--wibox.widget.textbox('  '),
 			--awful.widget.watch('bash -c "sensors | grep Tctl | sed \'s/ //g\' | sed \'s/Tctl/  /\' | sed \'s/://g\'"'
 			--	, 5),
-			wibox.widget.textbox('  '),
-			wibox.widget.textbox('  '),
-			awful.widget.watch('bash -c "cat /sys/class/power_supply/BAT1/capacity"', 60),
-			wibox.widget.textbox('%'),
-			wibox.widget.textbox('  '),
+			wibox.widget.textbox(' '),
 			wibox.widget.textbox(' '),
 			brightness_bar_widget,
 			wibox.widget.textbox('  '),
 			wibox.widget.textbox(' '),
 			volume_bar_widget,
+			wibox.widget.textbox('  '),
+			wibox.widget.textbox(' /'),
+			wibox.widget.textbox(''),
+			awful.widget.watch('bash -c "df -h | awk \'NR==4 {print $4}\'"', 3600),
+			wibox.widget.textbox(' - '),
+			wibox.widget.textbox('/ '),
+			awful.widget.watch('/home/sv/scripts/disk-usage.sh', 3600),
+			wibox.widget.textbox('  '),
+			--wibox.widget.textbox(' '),
+			--mykeyboardlayout,
+			----wibox.widget.systray(),
+			--wibox.widget.textbox('  '),
+			wibox.widget.textbox('  '),
+			awful.widget.watch('bash -c "cat /sys/class/power_supply/BAT1/capacity"', 60),
+			wibox.widget.textbox('%'),
 			wibox.widget.textbox(' '),
 			mytextclock,
 			wibox.widget.textbox(' '),
