@@ -26,15 +26,15 @@ theme.bg_urgent     = "#1e2030"
 theme.bg_minimize   = "#1e2030"
 theme.bg_systray    = theme.bg_normal
 
-theme.fg_normal     = "#cdd6f4"
+theme.fg_normal     = "#7f849c"
 theme.fg_focus      = "#89b4fa"
 theme.fg_urgent     = "#f38ba8"
 theme.fg_minimize   = "#ffffff"
 
 theme.useless_gap   = dpi(8)
-theme.border_width  = dpi(2)
-theme.border_normal = "#585b70"
-theme.border_focus  = "#b4befe"
+theme.border_width  = dpi(3)
+theme.border_normal = "#45475a"
+theme.border_focus  = "#7f849c"
 theme.border_marked = "#fab387"
 
 -- There are other variable sets
@@ -110,7 +110,7 @@ theme.titlebar_maximized_button_focus_inactive  = themes_path.."default/titlebar
 theme.titlebar_maximized_button_normal_active = themes_path.."default/titlebar/maximized_normal_active.png"
 theme.titlebar_maximized_button_focus_active  = themes_path.."default/titlebar/maximized_focus_active.png"
 
-theme.wallpaper = "/home/sv/data/walls/z8cf1suptb6a1.jpg"
+theme.wallpaper = "/home/sv/data/walls/595317.jpg"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh = themes_path.."default/layouts/fairhw.png"

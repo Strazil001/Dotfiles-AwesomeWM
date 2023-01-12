@@ -165,11 +165,10 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
--- Update the volume bar and brightness bar on key presses
-local volume_bar_widget, volume_bar_timer = awful.widget.watch('bash -c "/home/sv/scripts/volume-bar.sh"', 3600)
-local brightness_bar_widget, brightness_bar_timer = awful.widget.watch('bash -c "/home/sv/scripts/brightness-bar.sh"',
-	3600)
+local widget_fg = "#fab387"
+local widget_bg = "#313244"
 
+---------------------------------
 -- Cutom Widgets
 ---------------------------------
 
@@ -182,8 +181,8 @@ local memory_progressbar = wibox.widget {
 	shape            = gears.shape.rounded_bar,
 	border_width     = 0,
 	border_color     = beautiful.border_color,
-	color            = "#fab387",
-	background_color = "#45475a",
+	color            = widget_fg,
+	background_color = widget_bg,
 	widget           = wibox.widget.progressbar,
 }
 
@@ -196,7 +195,61 @@ awful.widget.watch('bash -c "free -m | awk \'/Mem/{print $3}\'"', 1, function(se
 	update_memory_widget(mem)
 end)
 
+-- Storage widget
+local container_storage_widget = wibox.container
+
+local storage_widget = wibox.widget {
+	align  = 'center',
+	valign = 'center',
+	widget = wibox.widget.textbox
+}
+
+local update_storage = function(st_root, st_home)
+	storage_widget.text = "Biebie" .. st_root .. st_home
+end
+
+local st_home
+
+local storage_root = awful.widget.watch('bash -c "df -h | awk \'NR==4 {print $4}\'"', 1, function(self, stdout)
+	local storage_home = awful.widget.watch('/home/sv/scripts/disk-usage.sh', 1, function(self, stdout)
+		st_home = stdout
+	end)
+	local st_root = stdout
+	update_storage(st_root, st_home)
+end)
+
+container_storage_widget = {
+	{
+		{
+			{
+				{
+					widget = storage_widget,
+				},
+				left   = 12,
+				right  = 12,
+				top    = 0,
+				bottom = 0,
+				widget = wibox.container.margin
+			},
+			shape  = gears.shape.rounded_bar,
+			fg     = widget_fg,
+			bg     = widget_bg,
+			widget = wibox.container.background
+		},
+
+		left   = 5,
+		right  = 5,
+		top    = 5,
+		bottom = 5,
+		widget = wibox.container.margin
+	},
+	spacing = 5,
+	layout  = wibox.layout.fixed.horizontal,
+}
+
 -- Cpu progressbar widget
+local container_cpu_widget = wibox.container
+
 local cpu_progressbar = wibox.widget {
 	max_value        = 100,
 	value            = 0, -- very hugly -- minimum value to handle to make it look good
@@ -204,9 +257,8 @@ local cpu_progressbar = wibox.widget {
 	forced_width     = 80,
 	shape            = gears.shape.rounded_bar,
 	border_width     = 0,
-	border_color     = beautiful.border_color,
-	color            = "#fab387",
-	background_color = "#45475a",
+	color            = widget_fg,
+	background_color = widget_bg,
 	widget           = wibox.widget.progressbar,
 }
 
@@ -219,42 +271,205 @@ awful.widget.watch('/home/sv/scripts/get-cpu.sh', 1, function(self, stdout)
 	update_cpu_widget(cpu)
 end)
 
---awful.widget.watch('bash -c "top -bn1 | awk \'/Cpu/ {print $2}\'"', 1, function(self, stdout)
---	local cpu = tonumber(stdout)
---	update_cpu_widget(cpu)
---end)
+container_cpu_widget = {
+	{
+		{
+			{
+				{
+					widget = cpu_progressbar,
+				},
+				left   = 12,
+				right  = 12,
+				top    = 0,
+				bottom = 0,
+				widget = wibox.container.margin,
+			},
+			shape  = gears.shape.rounded_bar,
+			fg     = widget_fg,
+			bg     = widget_bg,
+			widget = wibox.container.background
+		},
+		left   = 5,
+		right  = 5,
+		top    = 5,
+		bottom = 5,
+		widget = wibox.container.margin
+	},
+	spacing = 5,
+	layout  = wibox.layout.fixed.horizontal,
+}
 
--- Cpu graph widget
---local cpu_graph = wibox.widget {
---	max_value        = 5.0,
---	min_value        = 0.0,
---	scale = true,
---	step_spacing     = 1,
---	step_shape       = function(cr, width, height)
---		gears.shape.rounded_rect(cr, width, height, 2)
---	end,
---	forced_height    = 10,
---	forced_width     = 100,
---	color            = "#cdd6f4",
---	background_color = "#45475a",
---	widget           = wibox.widget.graph,
---}
---
---local update_cpu_graph = function(cpu)
---	cpu_graph.min_value = cpu
---end
---
---awful.widget.watch('bash -c "top -bn1 | awk \'/Cpu/ {print $2}\'"', 1, function(self, stdout)
---	local cpu = tonumber(stdout)
---	update_cpu_graph(cpu)
---end)
+-- Brightness widget
+local container_brightness_widget = wibox.container
 
-local battery_widget = wibox.widget {
-	markup = 'This <i>is</i> a <b>textbox</b>!!!',
+local brightness_widget = wibox.widget {
 	align  = 'center',
 	valign = 'center',
 	widget = wibox.widget.textbox
 }
+
+local update_brightness_widget = function(brightness)
+	brightness_widget.text = "  " .. brightness
+end
+
+local br, br_signal = awful.widget.watch('/home/sv/scripts/brightness-bar.sh', 60, function(self, stdout)
+	local brightness = stdout
+	update_brightness_widget(brightness)
+end)
+
+container_brightness_widget = {
+	{
+		{
+			{
+				{
+					widget = brightness_widget,
+				},
+				left   = 12,
+				right  = 12,
+				top    = 0,
+				bottom = 0,
+				widget = wibox.container.margin
+			},
+			shape  = gears.shape.rounded_bar,
+			fg     = widget_fg,
+			bg     = widget_bg,
+			widget = wibox.container.background
+		},
+
+		left   = 5,
+		right  = 5,
+		top    = 5,
+		bottom = 5,
+		widget = wibox.container.margin
+	},
+	spacing = 5,
+	layout  = wibox.layout.fixed.horizontal,
+}
+
+-- Volume widget
+local container_vol_widget = wibox.container
+
+local vol_widget = wibox.widget {
+	align  = 'center',
+	valign = 'center',
+	widget = wibox.widget.textbox
+}
+
+local update_vol_widget = function(vol)
+	vol_widget.text = "  " .. vol
+end
+
+local vo, vo_signal = awful.widget.watch('/home/sv/scripts/volume-bar.sh', 60, function(self, stdout)
+	local vol = stdout
+	update_vol_widget(vol)
+end)
+
+container_vol_widget = {
+	{
+		{
+			{
+				{
+					widget = vol_widget,
+				},
+				left   = 12,
+				right  = 12,
+				top    = 0,
+				bottom = 0,
+				widget = wibox.container.margin
+			},
+			shape  = gears.shape.rounded_bar,
+			fg     = widget_fg,
+			bg     = widget_bg,
+			widget = wibox.container.background
+		},
+
+		left   = 5,
+		right  = 5,
+		top    = 5,
+		bottom = 5,
+		widget = wibox.container.margin
+	},
+	spacing = 5,
+	layout  = wibox.layout.fixed.horizontal,
+}
+
+-- Batery widget
+local container_battery_widget = wibox.container
+
+local battery_widget = wibox.widget {
+	align  = 'center',
+	valign = 'center',
+	widget = wibox.widget.textbox
+}
+
+local update_battery_widget = function(bat)
+	battery_widget.text = "  " .. bat .. "%"
+end
+
+awful.widget.watch('bash -c "cat /sys/class/power_supply/BAT1/capacity"', 60, function(self, stdout)
+	local bat = tonumber(stdout)
+	update_battery_widget(bat)
+end)
+
+container_battery_widget = {
+	{
+		{
+			{
+				{
+					widget = battery_widget,
+				},
+				left   = 12,
+				right  = 12,
+				top    = 0,
+				bottom = 0,
+				widget = wibox.container.margin
+			},
+			shape  = gears.shape.rounded_bar,
+			fg     = widget_fg,
+			bg     = widget_bg,
+			widget = wibox.container.background
+		},
+
+		left   = 5,
+		right  = 5,
+		top    = 5,
+		bottom = 5,
+		widget = wibox.container.margin
+	},
+	spacing = 5,
+	layout  = wibox.layout.fixed.horizontal,
+}
+
+-- Clock widget
+container_clock_widget = {
+	{
+		{
+			{
+				{
+					widget = mytextclock,
+				},
+				left   = 10,
+				right  = 10,
+				top    = 0,
+				bottom = 0,
+				widget = wibox.container.margin
+			},
+			shape  = gears.shape.rounded_bar,
+			fg     = widget_fg,
+			bg     = widget_bg,
+			widget = wibox.container.background
+		},
+
+		left   = 5,
+		right  = 5,
+		top    = 5,
+		bottom = 5,
+		widget = wibox.container.margin
+	},
+	spacing = 5,
+	layout  = wibox.layout.fixed.horizontal,
+}
+
 
 awful.screen.connect_for_each_screen(function(s)
 	-- Wallpaper
@@ -274,6 +489,7 @@ awful.screen.connect_for_each_screen(function(s)
 		awful.button({}, 3, function() awful.layout.inc(-1) end),
 		awful.button({}, 4, function() awful.layout.inc(1) end),
 		awful.button({}, 5, function() awful.layout.inc(-1) end)))
+
 	-- Create a taglist widget
 	--s.mytaglist = awful.widget.taglist {
 	--	screen  = s,
@@ -289,7 +505,8 @@ awful.screen.connect_for_each_screen(function(s)
 	--}
 
 	-- Create the wibox
-	s.mywibox = awful.wibar({ position = "top", height = 25, screen = s })
+	s.mywibox = awful.wibar({ position = "top", height = 30, border_width = 3, border_color = "#00000000",
+		shape = gears.shape.rounded_bar, screen = s })
 
 	-- Add widgets to the wibox
 	s.mywibox:setup {
@@ -307,41 +524,15 @@ awful.screen.connect_for_each_screen(function(s)
 		},
 		{ -- Right widgets
 			layout = wibox.layout.fixed.horizontal,
-			volume_widget,
-			wibox.widget.textbox(' /'),
-			wibox.widget.textbox(''),
-			awful.widget.watch('bash -c "df -h | awk \'NR==4 {print $4}\'"', 3600),
-			wibox.widget.textbox(' '),
-			wibox.widget.textbox('/ '),
-			awful.widget.watch('/home/sv/scripts/disk-usage.sh', 3600),
-			--wibox.widget.textbox('  '),
-			--awful.widget.watch('bash -c "sensors | grep Tctl | sed \'s/ //g\' | sed \'s/Tctl/  /\' | sed \'s/://g\'"'
-			--	, 5),
-			wibox.widget.textbox(' '),
-			--wibox.widget.textbox(' '),
-			--mykeyboardlayout,
-			----wibox.widget.systray(),
-			--wibox.widget.textbox('  '),
+			--container_storage_widget,
 			wibox.widget.textbox('  '),
 			memory_progressbar,
-			wibox.widget.textbox(''),
-			wibox.widget.textbox('  '),
+			wibox.widget.textbox(' '),
 			cpu_progressbar,
-			--cpu_graph,
-			wibox.widget.textbox(' '),
-			wibox.widget.textbox(' '),
-			brightness_bar_widget,
-			wibox.widget.textbox('  '),
-			wibox.widget.textbox(' '),
-			volume_bar_widget,
-			wibox.widget.textbox('  '),
-			wibox.widget.textbox('  '),
-			awful.widget.watch('bash -c "cat /sys/class/power_supply/BAT1/capacity"', 60),
-			wibox.widget.textbox('%'),
-			wibox.widget.textbox(' '),
-			mytextclock,
-			wibox.widget.textbox(' '),
-			--s.mylayoutbox,
+			container_brightness_widget,
+			container_vol_widget,
+			container_battery_widget,
+			container_clock_widget,
 		},
 	}
 end)
@@ -485,7 +676,7 @@ globalkeys = gears.table.join(
 	--{ description = "show Dmenu", group = "launcher" }))
 
 	-- Rofi
-	awful.key({ modkey }, "space", function() awful.spawn("rofi -show combi") end,
+	awful.key({ modkey }, "space", function() awful.spawn("rofi -show run") end,
 		{ description = "show rofi", group = "launcher" }),
 
 	-- Rofi Calc
@@ -499,7 +690,7 @@ globalkeys = gears.table.join(
 		function()
 			--local brightness = [[/home/sv/scripts/brightness-bar.sh]]
 			awful.spawn("/home/sv/scripts/brightness-up.sh")
-			brightness_bar_timer:emit_signal("timeout")
+			br_signal:emit_signal("timeout")
 			--awful.spawn.easy_async(brightness, function(stdout)
 			--	naughty.notify {
 			--		--title = "Brightness",
@@ -523,7 +714,7 @@ globalkeys = gears.table.join(
 		function()
 			--local brightness = [[/home/sv/scripts/brightness-bar.sh]]
 			awful.spawn("/home/sv/scripts/brightness-down.sh")
-			brightness_bar_timer:emit_signal("timeout")
+			br_signal:emit_signal("timeout")
 			--awful.spawn.easy_async(brightness, function(stdout)
 			--	naughty.notify {
 			--		--title = "Brightness",
@@ -547,7 +738,7 @@ globalkeys = gears.table.join(
 		function()
 			--local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
-			volume_bar_timer:emit_signal("timeout")
+			vo_signal:emit_signal("timeout")
 			--awful.spawn.easy_async(volume, function(stdout)
 			--	naughty.notify {
 			--		--title = "Brightness",
@@ -571,7 +762,7 @@ globalkeys = gears.table.join(
 		function()
 			--local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
-			volume_bar_timer:emit_signal("timeout")
+			vo_signal:emit_signal("timeout")
 			--awful.spawn.easy_async(volume, function(stdout)
 			--	naughty.notify {
 			--		--title = "Brightness",
