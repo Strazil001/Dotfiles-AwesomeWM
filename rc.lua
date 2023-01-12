@@ -548,7 +548,6 @@ globalkeys = gears.table.join(
 			--local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
 			volume_bar_timer:emit_signal("timeout")
-			volume_timer:emit_signal("timeout")
 			--awful.spawn.easy_async(volume, function(stdout)
 			--	naughty.notify {
 			--		--title = "Brightness",
@@ -573,7 +572,6 @@ globalkeys = gears.table.join(
 			--local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
 			volume_bar_timer:emit_signal("timeout")
-			volume_timer:emit_signal("timeout")
 			--awful.spawn.easy_async(volume, function(stdout)
 			--	naughty.notify {
 			--		--title = "Brightness",
