@@ -17,7 +17,7 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font          = "Roboto Mono Nerd Font 9"
+theme.font          = "Roboto Mono Nerd Font 10"
 theme.taglist_font  = "Roboto Mono Nerd Font 11"
 
 theme.bg_normal     = "#1e2030"
@@ -28,14 +28,14 @@ theme.bg_systray    = theme.bg_normal
 
 theme.fg_normal     = "#cdd6f4"
 theme.fg_focus      = "#89b4fa"
-theme.fg_urgent     = "#ed8796"
+theme.fg_urgent     = "#f38ba8"
 theme.fg_minimize   = "#ffffff"
 
-theme.useless_gap   = dpi(6)
-theme.border_width  = dpi(3)
-theme.border_normal = "#313244"
-theme.border_focus  = "#89b4fa"
-theme.border_marked = "#91231c"
+theme.useless_gap   = dpi(8)
+theme.border_width  = dpi(2)
+theme.border_normal = "#585b70"
+theme.border_focus  = "#b4befe"
+theme.border_marked = "#fab387"
 
 -- There are other variable sets
 -- overriding the default one when
@@ -51,13 +51,13 @@ theme.border_marked = "#91231c"
 --theme.taglist_bg_focus = "#ff0000"
 
 -- Generate taglist squares:
-local taglist_square_size = dpi(4)
-theme.taglist_squares_sel = theme_assets.taglist_squares_sel(
-    taglist_square_size, theme.fg_focus
-)
-theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
-    taglist_square_size, theme.fg_normal
-)
+--local taglist_square_size = dpi(4)
+--theme.taglist_squares_sel = theme_assets.taglist_squares_sel(
+--    taglist_square_size, theme.fg_focus
+--)
+--theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
+--    taglist_square_size, theme.fg_normal
+--)
 
 -- MEM
 local memicon = wibox.widget.imagebox(theme.widget_mem)

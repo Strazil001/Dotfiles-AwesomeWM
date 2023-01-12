@@ -177,12 +177,12 @@ local brightness_bar_widget, brightness_bar_timer = awful.widget.watch('bash -c 
 local memory_progressbar = wibox.widget {
 	max_value        = 16000,
 	value            = 0, -- very hugly -- minimum value to handle to make it look good
-	margins          = 8,
-	forced_width     = 60,
+	margins          = 9,
+	forced_width     = 80,
 	shape            = gears.shape.rounded_bar,
 	border_width     = 0,
 	border_color     = beautiful.border_color,
-	color            = "#cdd6f4",
+	color            = "#fab387",
 	background_color = "#45475a",
 	widget           = wibox.widget.progressbar,
 }
@@ -200,12 +200,12 @@ end)
 local cpu_progressbar = wibox.widget {
 	max_value        = 100,
 	value            = 0, -- very hugly -- minimum value to handle to make it look good
-	margins          = 8,
-	forced_width     = 60,
+	margins          = 9,
+	forced_width     = 80,
 	shape            = gears.shape.rounded_bar,
 	border_width     = 0,
 	border_color     = beautiful.border_color,
-	color            = "#cdd6f4",
+	color            = "#fab387",
 	background_color = "#45475a",
 	widget           = wibox.widget.progressbar,
 }
@@ -214,10 +214,15 @@ local update_cpu_widget = function(cpu)
 	cpu_progressbar.value = cpu
 end
 
-awful.widget.watch('bash -c "top -bn1 | awk \'/Cpu/ {print $2}\'"', 1, function(self, stdout)
+awful.widget.watch('/home/sv/scripts/get-cpu.sh', 1, function(self, stdout)
 	local cpu = tonumber(stdout)
 	update_cpu_widget(cpu)
 end)
+
+--awful.widget.watch('bash -c "top -bn1 | awk \'/Cpu/ {print $2}\'"', 1, function(self, stdout)
+--	local cpu = tonumber(stdout)
+--	update_cpu_widget(cpu)
+--end)
 
 -- Cpu graph widget
 --local cpu_graph = wibox.widget {
@@ -244,6 +249,13 @@ end)
 --	update_cpu_graph(cpu)
 --end)
 
+local battery_widget = wibox.widget {
+	markup = 'This <i>is</i> a <b>textbox</b>!!!',
+	align  = 'center',
+	valign = 'center',
+	widget = wibox.widget.textbox
+}
+
 awful.screen.connect_for_each_screen(function(s)
 	-- Wallpaper
 	set_wallpaper(s)
@@ -263,12 +275,12 @@ awful.screen.connect_for_each_screen(function(s)
 		awful.button({}, 4, function() awful.layout.inc(1) end),
 		awful.button({}, 5, function() awful.layout.inc(-1) end)))
 	-- Create a taglist widget
-	s.mytaglist = awful.widget.taglist {
-		screen  = s,
-		filter  = awful.widget.taglist.filter.all,
-		buttons = taglist_buttons
-	}
-
+	--s.mytaglist = awful.widget.taglist {
+	--	screen  = s,
+	--	filter  = awful.widget.taglist.filter.all,
+	--	buttons = taglist_buttons
+	--}
+	s.mytaglist = require("my_taglist")(s)
 	-- Create a tasklist widget
 	--s.mytasklist = awful.widget.tasklist {
 	--    screen  = s,
@@ -277,7 +289,7 @@ awful.screen.connect_for_each_screen(function(s)
 	--}
 
 	-- Create the wibox
-	s.mywibox = awful.wibar({ position = "top", height = 24, screen = s })
+	s.mywibox = awful.wibar({ position = "top", height = 25, screen = s })
 
 	-- Add widgets to the wibox
 	s.mywibox:setup {
@@ -295,15 +307,27 @@ awful.screen.connect_for_each_screen(function(s)
 		},
 		{ -- Right widgets
 			layout = wibox.layout.fixed.horizontal,
+			volume_widget,
+			wibox.widget.textbox(' /'),
+			wibox.widget.textbox(''),
+			awful.widget.watch('bash -c "df -h | awk \'NR==4 {print $4}\'"', 3600),
+			wibox.widget.textbox(' '),
+			wibox.widget.textbox('/ '),
+			awful.widget.watch('/home/sv/scripts/disk-usage.sh', 3600),
+			--wibox.widget.textbox('  '),
+			--awful.widget.watch('bash -c "sensors | grep Tctl | sed \'s/ //g\' | sed \'s/Tctl/  /\' | sed \'s/://g\'"'
+			--	, 5),
+			wibox.widget.textbox(' '),
+			--wibox.widget.textbox(' '),
+			--mykeyboardlayout,
+			----wibox.widget.systray(),
+			--wibox.widget.textbox('  '),
 			wibox.widget.textbox('  '),
 			memory_progressbar,
 			wibox.widget.textbox(''),
 			wibox.widget.textbox('  '),
 			cpu_progressbar,
 			--cpu_graph,
-			--wibox.widget.textbox('  '),
-			--awful.widget.watch('bash -c "sensors | grep Tctl | sed \'s/ //g\' | sed \'s/Tctl/  /\' | sed \'s/://g\'"'
-			--	, 5),
 			wibox.widget.textbox(' '),
 			wibox.widget.textbox(' '),
 			brightness_bar_widget,
@@ -311,17 +335,6 @@ awful.screen.connect_for_each_screen(function(s)
 			wibox.widget.textbox(' '),
 			volume_bar_widget,
 			wibox.widget.textbox('  '),
-			wibox.widget.textbox(' /'),
-			wibox.widget.textbox(''),
-			awful.widget.watch('bash -c "df -h | awk \'NR==4 {print $4}\'"', 3600),
-			wibox.widget.textbox(' - '),
-			wibox.widget.textbox('/ '),
-			awful.widget.watch('/home/sv/scripts/disk-usage.sh', 3600),
-			wibox.widget.textbox('  '),
-			--wibox.widget.textbox(' '),
-			--mykeyboardlayout,
-			----wibox.widget.systray(),
-			--wibox.widget.textbox('  '),
 			wibox.widget.textbox('  '),
 			awful.widget.watch('bash -c "cat /sys/class/power_supply/BAT1/capacity"', 60),
 			wibox.widget.textbox('%'),
@@ -394,7 +407,23 @@ globalkeys = gears.table.join(
 	awful.key({ modkey, }, "b", function() awful.spawn("qutebrowser") end,
 		{ description = "open qutebrowser", group = "launcher" }),
 	awful.key({ modkey }, "s",
-		function() awful.spawn("scrot -q 100 -d 3 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png") end,
+		function()
+			awful.spawn("scrot -q 100 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png")
+			naughty.notify {
+				title = " ",
+				text = " Screenshot taken",
+				font = "Roboto Mono Nerd Font 10",
+				margins = 10,
+				--replaces_id = 1,
+				--border_width = 3,
+				--border_color = "#89b4fa",
+				width = 170,
+				height = 75,
+				shape = function(cr, width, heigt)
+					gears.shape.rounded_rect(cr, width, heigt, 5)
+				end
+			}
+		end,
 		{ description = "Take screenshot fullscreen", group = "screen" }),
 	awful.key({ modkey, "Shift" }, "s",
 		function() awful.spawn("scrot -s -q 100 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png") end,
@@ -519,6 +548,7 @@ globalkeys = gears.table.join(
 			--local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
 			volume_bar_timer:emit_signal("timeout")
+			volume_timer:emit_signal("timeout")
 			--awful.spawn.easy_async(volume, function(stdout)
 			--	naughty.notify {
 			--		--title = "Brightness",
@@ -543,6 +573,7 @@ globalkeys = gears.table.join(
 			--local volume = [[/home/sv/scripts/volume-bar.sh]]
 			awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
 			volume_bar_timer:emit_signal("timeout")
+			volume_timer:emit_signal("timeout")
 			--awful.spawn.easy_async(volume, function(stdout)
 			--	naughty.notify {
 			--		--title = "Brightness",
