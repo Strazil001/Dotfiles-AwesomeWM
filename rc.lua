@@ -336,7 +336,7 @@ container_brightness_widget = {
 			widget = wibox.container.background
 		},
 
-		left   = 5,
+		left   = 0,
 		right  = 5,
 		top    = 5,
 		bottom = 5,
