@@ -175,24 +175,35 @@ local widget_bg = "#313244"
 -- Storage widget
 local container_storage_widget = wibox.container
 
-local storage_widget = wibox.widget {
+local storage_widget_root = wibox.widget {
 	align  = 'center',
 	valign = 'center',
 	widget = wibox.widget.textbox
 }
 
-local update_storage = function(st_root, st_home)
-	storage_widget.text = "Biebie" .. st_root .. st_home
+local update_storage_root = function(st_root)
+	storage_widget_root.text = " " .. st_root
 end
 
-local st_home
+local storage_widget_home = wibox.widget {
+	align  = 'center',
+	valign = 'center',
+	widget = wibox.widget.textbox
+}
+
+local update_storage_home = function(st_home)
+	storage_widget_home.text = " " .. st_home
+end
+
 
 local storage_root = awful.widget.watch('bash -c "df -h | awk \'NR==4 {print $4}\'"', 1, function(self, stdout)
-	local storage_home = awful.widget.watch('/home/sv/scripts/disk-usage.sh', 1, function(self, stdout)
-		st_home = stdout
-	end)
 	local st_root = stdout
-	update_storage(st_root, st_home)
+	update_storage_root(st_root)
+end)
+
+local storage_home = awful.widget.watch('/home/sv/scripts/disk-usage.sh', 1, function(self, stdout)
+	st_home = stdout
+	update_storage_home(st_home)
 end)
 
 container_storage_widget = {
@@ -200,21 +211,29 @@ container_storage_widget = {
 		{
 			{
 				{
-					widget = storage_widget,
+
+					{
+						widget = storage_widget_root,
+					},
+					{
+						widget = storage_widget_home,
+					},
+					layout = wibox.layout.flex.horizontal
 				},
-				left   = 12,
-				right  = 12,
-				top    = 0,
-				bottom = 0,
+				left   = 5,
+				right  = 5,
+				top    = 2,
+				bottom = 2,
 				widget = wibox.container.margin
 			},
 			shape  = gears.shape.rounded_bar,
-			fg     = widget_fg,
+			fg     = "#cdd6f4",
 			bg     = widget_bg,
+			forced_width = 140,
 			widget = wibox.container.background
 		},
 
-		left   = 5,
+		left   = 20,
 		right  = 5,
 		top    = 7,
 		bottom = 7,
@@ -229,7 +248,7 @@ local container_mem_widget = wibox.container
 local memory_progressbar = wibox.widget {
 	max_value        = 16000,
 	value            = 0.5, -- very hugly -- minimum value to handle to make it look good
-	margins          = 4,
+	margins          = 2,
 	forced_width     = 80,
 	shape            = gears.shape.rounded_bar,
 	border_width     = 0.5,
@@ -255,6 +274,7 @@ container_mem_widget = {
 				{
 					{
 						text   = "  ",
+						font   = "JetBrainsMono Nerd Font 9",
 						widget = wibox.widget.textbox,
 					},
 					{
@@ -264,8 +284,8 @@ container_mem_widget = {
 				},
 				left   = 12,
 				right  = 12,
-				top    = 0,
-				bottom = 0,
+				top    = 2,
+				bottom = 2,
 				widget = wibox.container.margin
 			},
 			shape  = gears.shape.rounded_bar,
@@ -289,7 +309,7 @@ local container_cpu_widget = wibox.container
 local cpu_progressbar = wibox.widget {
 	max_value        = 100,
 	value            = 0.5, -- very hugly -- minimum value to handle to make it look good
-	margins          = 4,
+	margins          = 2,
 	forced_width     = 80,
 	shape            = gears.shape.rounded_bar,
 	border_width     = 0.5,
@@ -315,6 +335,7 @@ container_cpu_widget = {
 				{
 					{
 						text   = "  ",
+						font   = "JetBrainsMono Nerd Font 9",
 						widget = wibox.widget.textbox,
 					},
 					{
@@ -324,8 +345,8 @@ container_cpu_widget = {
 				},
 				left   = 12,
 				right  = 12,
-				top    = 0,
-				bottom = 0,
+				top    = 2,
+				bottom = 2,
 				widget = wibox.container.margin
 			},
 			shape  = gears.shape.rounded_bar,
@@ -424,6 +445,53 @@ container_vol_widget = {
 			},
 			shape  = gears.shape.rounded_bar,
 			fg     = "#f38ba8",
+			bg     = widget_bg,
+			widget = wibox.container.background
+		},
+
+		left   = 5,
+		right  = 5,
+		top    = 7,
+		bottom = 7,
+		widget = wibox.container.margin
+	},
+	spacing = 5,
+	layout  = wibox.layout.fixed.horizontal,
+}
+
+-- Temp widget
+local container_temp_widget = wibox.container
+
+local temp_widget = wibox.widget {
+	align  = 'center',
+	valign = 'center',
+	widget = wibox.widget.textbox
+}
+
+local update_temp_widget = function(temp)
+	temp_widget.text = "  " .. temp
+end
+
+awful.widget.watch('bash -c "sensors | grep edge | awk \'{print $2}\'"', 1, function(self, stdout)
+	local temp = stdout
+	update_temp_widget(temp)
+end)
+
+container_temp_widget = {
+	{
+		{
+			{
+				{
+					widget = temp_widget,
+				},
+				left   = 12,
+				right  = 12,
+				top    = 2,
+				bottom = 2,
+				widget = wibox.container.margin
+			},
+			shape  = gears.shape.rounded_bar,
+			fg     = "#a6e3a1",
 			bg     = widget_bg,
 			widget = wibox.container.background
 		},
@@ -609,7 +677,7 @@ awful.screen.connect_for_each_screen(function(s)
 				shape  = gears.shape.rounded_bar,
 				widget = wibox.container.background,
 			},
-			left   = 20,
+			left   = 10,
 			right  = 0,
 			top    = 7,
 			bottom = 7,
@@ -637,7 +705,8 @@ awful.screen.connect_for_each_screen(function(s)
 		},
 		{ -- Right widgets
 			layout = wibox.layout.fixed.horizontal,
-			--container_storage_widget,
+			container_temp_widget,
+			container_storage_widget,
 			container_layoutbox_widget,
 			container_cpu_widget,
 			container_mem_widget,
