@@ -62,11 +62,11 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-	awful.layout.suit.tile,
+	awful.layout.suit.tile.left,
+	--awful.layout.suit.tile,
 	awful.layout.suit.floating,
 	awful.layout.suit.max,
-	awful.layout.suit.max.fullscreen,
-	--    awful.layout.suit.tile.left,
+	--awful.layout.suit.max.fullscreen,
 	--    awful.layout.suit.tile.bottom,
 	--    awful.layout.suit.tile.top,
 	--    awful.layout.suit.fair,
@@ -165,35 +165,12 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
-local widget_fg = "#fab387"
+local widget_fg = "#a6adc8"
 local widget_bg = "#313244"
 
 ---------------------------------
 -- Cutom Widgets
 ---------------------------------
-
--- Memory progressbar widget
-local memory_progressbar = wibox.widget {
-	max_value        = 16000,
-	value            = 0, -- very hugly -- minimum value to handle to make it look good
-	margins          = 9,
-	forced_width     = 80,
-	shape            = gears.shape.rounded_bar,
-	border_width     = 0,
-	border_color     = beautiful.border_color,
-	color            = widget_fg,
-	background_color = widget_bg,
-	widget           = wibox.widget.progressbar,
-}
-
-local update_memory_widget = function(mem)
-	memory_progressbar.value = mem
-end
-
-awful.widget.watch('bash -c "free -m | awk \'/Mem/{print $3}\'"', 1, function(self, stdout)
-	local mem = tonumber(stdout)
-	update_memory_widget(mem)
-end)
 
 -- Storage widget
 local container_storage_widget = wibox.container
@@ -239,11 +216,70 @@ container_storage_widget = {
 
 		left   = 5,
 		right  = 5,
-		top    = 5,
-		bottom = 5,
+		top    = 7,
+		bottom = 7,
 		widget = wibox.container.margin
 	},
 	spacing = 5,
+	layout  = wibox.layout.fixed.horizontal,
+}
+
+local container_mem_widget = wibox.container
+-- Memory progressbar widget
+local memory_progressbar = wibox.widget {
+	max_value        = 16000,
+	value            = 0.5, -- very hugly -- minimum value to handle to make it look good
+	margins          = 4,
+	forced_width     = 80,
+	shape            = gears.shape.rounded_bar,
+	border_width     = 0.5,
+	border_color     = "#b4befe",
+	color            = "#b4befe",
+	background_color = widget_bg,
+	widget           = wibox.widget.progressbar,
+}
+
+local update_memory_widget = function(mem)
+	memory_progressbar.value = mem
+end
+
+awful.widget.watch('bash -c "free -m | awk \'/Mem/{print $3}\'"', 1, function(self, stdout)
+	local mem = tonumber(stdout)
+	update_memory_widget(mem)
+end)
+
+container_mem_widget = {
+	{
+		{
+			{
+				{
+					{
+						text   = "  ",
+						widget = wibox.widget.textbox,
+					},
+					{
+						widget = memory_progressbar,
+					},
+					layout = wibox.layout.fixed.horizontal
+				},
+				left   = 12,
+				right  = 12,
+				top    = 0,
+				bottom = 0,
+				widget = wibox.container.margin
+			},
+			shape  = gears.shape.rounded_bar,
+			fg     = "#b4befe",
+			bg     = widget_bg,
+			widget = wibox.container.background
+		},
+		left   = 5,
+		right  = 5,
+		top    = 7,
+		bottom = 7,
+		widget = wibox.container.margin
+	},
+	spacing = 0,
 	layout  = wibox.layout.fixed.horizontal,
 }
 
@@ -252,12 +288,13 @@ local container_cpu_widget = wibox.container
 
 local cpu_progressbar = wibox.widget {
 	max_value        = 100,
-	value            = 0, -- very hugly -- minimum value to handle to make it look good
-	margins          = 9,
+	value            = 0.5, -- very hugly -- minimum value to handle to make it look good
+	margins          = 4,
 	forced_width     = 80,
 	shape            = gears.shape.rounded_bar,
-	border_width     = 0,
-	color            = widget_fg,
+	border_width     = 0.5,
+	border_color     = "#fab387",
+	color            = "#fab387",
 	background_color = widget_bg,
 	widget           = wibox.widget.progressbar,
 }
@@ -276,26 +313,33 @@ container_cpu_widget = {
 		{
 			{
 				{
-					widget = cpu_progressbar,
+					{
+						text   = "  ",
+						widget = wibox.widget.textbox,
+					},
+					{
+						widget = cpu_progressbar,
+					},
+					layout = wibox.layout.fixed.horizontal
 				},
 				left   = 12,
 				right  = 12,
 				top    = 0,
 				bottom = 0,
-				widget = wibox.container.margin,
+				widget = wibox.container.margin
 			},
 			shape  = gears.shape.rounded_bar,
-			fg     = widget_fg,
+			fg     = "#fab387",
 			bg     = widget_bg,
 			widget = wibox.container.background
 		},
 		left   = 5,
 		right  = 5,
-		top    = 5,
-		bottom = 5,
+		top    = 7,
+		bottom = 7,
 		widget = wibox.container.margin
 	},
-	spacing = 5,
+	spacing = 0,
 	layout  = wibox.layout.fixed.horizontal,
 }
 
@@ -317,6 +361,7 @@ local br, br_signal = awful.widget.watch('/home/sv/scripts/brightness-bar.sh', 6
 	update_brightness_widget(brightness)
 end)
 
+
 container_brightness_widget = {
 	{
 		{
@@ -331,15 +376,15 @@ container_brightness_widget = {
 				widget = wibox.container.margin
 			},
 			shape  = gears.shape.rounded_bar,
-			fg     = widget_fg,
+			fg     = "#f9e2af",
 			bg     = widget_bg,
 			widget = wibox.container.background
 		},
 
 		left   = 0,
 		right  = 5,
-		top    = 5,
-		bottom = 5,
+		top    = 7,
+		bottom = 7,
 		widget = wibox.container.margin
 	},
 	spacing = 5,
@@ -378,15 +423,15 @@ container_vol_widget = {
 				widget = wibox.container.margin
 			},
 			shape  = gears.shape.rounded_bar,
-			fg     = widget_fg,
+			fg     = "#f38ba8",
 			bg     = widget_bg,
 			widget = wibox.container.background
 		},
 
 		left   = 5,
 		right  = 5,
-		top    = 5,
-		bottom = 5,
+		top    = 7,
+		bottom = 7,
 		widget = wibox.container.margin
 	},
 	spacing = 5,
@@ -425,15 +470,47 @@ container_battery_widget = {
 				widget = wibox.container.margin
 			},
 			shape  = gears.shape.rounded_bar,
-			fg     = widget_fg,
+			fg     = "#a6e3a1",
 			bg     = widget_bg,
 			widget = wibox.container.background
 		},
 
 		left   = 5,
 		right  = 5,
-		top    = 5,
-		bottom = 5,
+		top    = 7,
+		bottom = 7,
+		widget = wibox.container.margin
+	},
+	spacing = 5,
+	layout  = wibox.layout.fixed.horizontal,
+}
+
+-- Clock widget
+container_arch_widget = {
+	{
+		{
+			{
+				{
+					text = "  ",
+					font = "JetBrainsMono Nerd Font 12",
+					widget = wibox.widget.textbox,
+				},
+				left   = 0,
+				right  = 4,
+				top    = 2,
+				bottom = 2,
+				widget = wibox.container.margin
+			},
+			shape  = gears.shape.rounded_bar,
+			fg     = "#cdd6f4",
+			bg     = widget_bg,
+			widget = wibox.container.background
+		},
+
+		left   = 5,
+		right  = 7,
+		top    = 7,
+		bottom = 7,
 		widget = wibox.container.margin
 	},
 	spacing = 5,
@@ -455,21 +532,20 @@ container_clock_widget = {
 				widget = wibox.container.margin
 			},
 			shape  = gears.shape.rounded_bar,
-			fg     = widget_fg,
+			fg     = "#b4befe",
 			bg     = widget_bg,
 			widget = wibox.container.background
 		},
 
 		left   = 5,
 		right  = 5,
-		top    = 5,
-		bottom = 5,
+		top    = 7,
+		bottom = 7,
 		widget = wibox.container.margin
 	},
 	spacing = 5,
 	layout  = wibox.layout.fixed.horizontal,
 }
-
 
 awful.screen.connect_for_each_screen(function(s)
 	-- Wallpaper
@@ -497,42 +573,79 @@ awful.screen.connect_for_each_screen(function(s)
 	--	buttons = taglist_buttons
 	--}
 	s.mytaglist = require("my_taglist")(s)
+
 	-- Create a tasklist widget
-	--s.mytasklist = awful.widget.tasklist {
-	--    screen  = s,
-	--    filter  = awful.widget.tasklist.filter.currenttags,
-	--    buttons = tasklist_buttons
-	--}
+	s.mytasklist = awful.widget.tasklist {
+		screen          = s,
+		filter          = awful.widget.tasklist.filter.currenttags,
+		style           = {
+			shape = gears.shape.rounded_bar,
+		},
+		layout          = {
+			spacing = 10,
+			layout  = wibox.layout.fixed.horizontal
+		},
+		-- Notice that there is *NO* wibox.wibox prefix, it is a template,
+		-- not a widget instance.
+		widget_template = {
+			{
+
+				{
+					{
+						{
+							id     = "text_role",
+							widget = wibox.widget.textbox,
+						},
+						layout = wibox.layout.fixed.horizontal,
+					},
+					left   = 10,
+					right  = 10,
+					top    = 0,
+					bottom = 0,
+					widget = wibox.container.margin
+				},
+				fg     = widget_fg,
+				bg     = widget_bg,
+				shape  = gears.shape.rounded_bar,
+				widget = wibox.container.background,
+			},
+			left   = 20,
+			right  = 0,
+			top    = 7,
+			bottom = 7,
+			widget = wibox.container.margin
+		},
+	}
 
 	-- Create the wibox
 	s.mywibox = awful.wibar({ position = "top", height = 30, border_width = 3, border_color = "#00000000",
-		shape = gears.shape.rounded_bar, screen = s })
+		shape = gears.shape.rounded_bar, input_passthrough = true, screen = s })
 
 	-- Add widgets to the wibox
 	s.mywibox:setup {
 		layout = wibox.layout.align.horizontal,
 		{ -- Left widgets
-			wibox.widget.textbox(' '),
+			wibox.widget.textbox(" "),
 			layout = wibox.layout.fixed.horizontal,
 			--mylauncher,
 			s.mytaglist,
 			s.mypromptbox,
 		},
 		{ -- Middle widgets
-			layout = wibox.layout.flex.horizontal,
-			--wibox.widget.textbox(' '),
+			layout = wibox.layout.fixed.horizontal,
+			s.mytasklist,
 		},
 		{ -- Right widgets
 			layout = wibox.layout.fixed.horizontal,
 			--container_storage_widget,
-			wibox.widget.textbox('  '),
-			memory_progressbar,
-			wibox.widget.textbox(' '),
-			cpu_progressbar,
+			container_layoutbox_widget,
+			container_cpu_widget,
+			container_mem_widget,
 			container_brightness_widget,
 			container_vol_widget,
 			container_battery_widget,
 			container_clock_widget,
+			container_arch_widget,
 		},
 	}
 end)
@@ -599,19 +712,22 @@ globalkeys = gears.table.join(
 		{ description = "open qutebrowser", group = "launcher" }),
 	awful.key({ modkey }, "s",
 		function()
-			awful.spawn("scrot -q 100 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png")
+			awful.spawn("scrot -q 100 -d 1 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png")
 			naughty.notify {
 				title = " ",
-				text = " Screenshot taken",
-				font = "Roboto Mono Nerd Font 10",
-				margins = 10,
+				text = "      Screenshot taken",
+				font = "Roboto Mono Nerd Font 12",
+				margin = 15,
+				opacity = 0.7,
+				border_width = 3,
+				border_color = "#9888c6",
 				--replaces_id = 1,
 				--border_width = 3,
 				--border_color = "#89b4fa",
-				width = 170,
-				height = 75,
+				width = 300,
+				height = 100,
 				shape = function(cr, width, heigt)
-					gears.shape.rounded_rect(cr, width, heigt, 5)
+					gears.shape.rounded_rect(cr, width, heigt, 10)
 				end
 			}
 		end,
