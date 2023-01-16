@@ -689,11 +689,12 @@ awful.screen.connect_for_each_screen(function(s)
 	}
 
 	-- Create the wibox
-	s.mywibox = awful.wibar({ position = "top", height = 30, border_width = 3, border_color = "#00000000",
+	s.mywibox = awful.wibar({ position = "top", height = 30, border_width = 5, border_color = "#00000000",
 		shape = gears.shape.rounded_bar, input_passthrough = true, screen = s })
 
 	-- Add widgets to the wibox
 	s.mywibox:setup {
+		layout = wibox.layout.align.horizontal,
 		{ -- Left widgets
 			container_arch_widget,
 			layout = wibox.layout.fixed.horizontal,
@@ -717,7 +718,6 @@ awful.screen.connect_for_each_screen(function(s)
 			container_clock_widget,
 			layoutbox,
 		},
-		layout = wibox.layout.align.horizontal,
 	}
 end)
 -- }}}
