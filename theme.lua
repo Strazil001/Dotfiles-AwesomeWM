@@ -9,6 +9,7 @@ local dpi = xresources.apply_dpi
 local wibox = require("wibox")
 local awful = require("awful")
 local gears = require("gears")
+local gcolor = require("gears.color")
 local my_table = awful.util.table or gears.table -- 4.{0,1} compatibility
 
 
@@ -19,7 +20,7 @@ local themes_path = gfs.get_themes_dir()
 local theme = {}
 
 theme.font         = "Roboto Mono Nerd Font 10"
-theme.taglist_font = "Roboto Mono Nerd Font 11"
+theme.taglist_font = "Roboto Mono Nerd Font 10"
 
 theme.bg_normal   = "#1e2030"
 theme.bg_focus    = "#1e2030"
@@ -35,7 +36,7 @@ theme.fg_minimize = "#ffffff"
 theme.useless_gap   = dpi(6)
 theme.border_width  = dpi(3)
 theme.border_normal = "#45475a"
-theme.border_focus  = "#9888c6"
+theme.border_focus  = "#8293ce"
 theme.border_marked = "#fab387"
 
 -- There are other variable sets
@@ -111,17 +112,17 @@ theme.titlebar_maximized_button_focus_inactive  = themes_path .. "default/titleb
 theme.titlebar_maximized_button_normal_active   = themes_path .. "default/titlebar/maximized_normal_active.png"
 theme.titlebar_maximized_button_focus_active    = themes_path .. "default/titlebar/maximized_focus_active.png"
 
-theme.wallpaper = "/home/sv/data/walls/z8cf1suptb6a1.jpg"
+theme.wallpaper = "/home/sv/data/walls/418349.jpg"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh      = themes_path .. "default/layouts/fairhw.png"
 theme.layout_fairv      = themes_path .. "default/layouts/fairvw.png"
-theme.layout_floating   = themes_path .. "default/layouts/floatingw.png"
+theme.layout_floating   = "/home/sv/pictures/Icons-AwesomeWM-Layouts-pastel/floating.png"
 theme.layout_magnifier  = themes_path .. "default/layouts/magnifierw.png"
-theme.layout_max        = themes_path .. "default/layouts/maxw.png"
+theme.layout_max        = "/home/sv/pictures/Icons-AwesomeWM-Layouts-pastel/max.png"
 theme.layout_fullscreen = themes_path .. "default/layouts/fullscreenw.png"
 theme.layout_tilebottom = themes_path .. "default/layouts/tilebottomw.png"
-theme.layout_tileleft   = themes_path .. "default/layouts/tileleftw.png"
+theme.layout_tileleft   = "/home/sv/pictures/Icons-AwesomeWM-Layouts-pastel/tileleft.png"
 theme.layout_tile       = themes_path .. "default/layouts/tilew.png"
 theme.layout_tiletop    = themes_path .. "default/layouts/tiletopw.png"
 theme.layout_spiral     = themes_path .. "default/layouts/spiralw.png"
@@ -130,6 +131,9 @@ theme.layout_cornernw   = themes_path .. "default/layouts/cornernww.png"
 theme.layout_cornerne   = themes_path .. "default/layouts/cornernew.png"
 theme.layout_cornersw   = themes_path .. "default/layouts/cornersww.png"
 theme.layout_cornerse   = themes_path .. "default/layouts/cornersew.png"
+
+theme.layout_archlogo = "/home/sv/pictures/Icons-AwesomeWM-Layouts-pastel/archlinux.png"
+
 
 for _, value in ipairs { true, false } do
     beautiful.tasklist_plain_task_name = false
