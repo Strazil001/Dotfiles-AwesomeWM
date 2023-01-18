@@ -689,35 +689,40 @@ awful.screen.connect_for_each_screen(function(s)
 	}
 
 	-- Create the wibox
-	s.mywibox = awful.wibar({ position = "top", height = 30, border_width = 5, border_color = "#00000000",
-		shape = gears.shape.rounded_bar, input_passthrough = true, screen = s })
+	s.mywibox = awful.wibar({ position = "top", border_width = 0, border_color = "#00000000", height = 30, input_passthrough = true, screen = s })
+
 
 	-- Add widgets to the wibox
 	s.mywibox:setup {
-		layout = wibox.layout.align.horizontal,
-		{ -- Left widgets
-			container_arch_widget,
-			layout = wibox.layout.fixed.horizontal,
-			--mylauncher,
-			s.mytaglist,
-			s.mypromptbox,
+		{
+			layout = wibox.layout.align.horizontal,
+			{ -- Left widgets
+				container_arch_widget,
+				layout = wibox.layout.fixed.horizontal,
+				--mylauncher,
+				s.mytaglist,
+				s.mypromptbox,
+			},
+			{ -- Middle widgets
+				layout = wibox.layout.fixed.horizontal,
+				s.mytasklist,
+			},
+			{ -- Right widgets
+				layout = wibox.layout.fixed.horizontal,
+				--container_temp_widget,
+				container_storage_widget,
+				--container_cpu_widget,
+				--container_mem_widget,
+				container_brightness_widget,
+				container_vol_widget,
+				container_battery_widget,
+				container_clock_widget,
+				layoutbox,
+			}
 		},
-		{ -- Middle widgets
-			layout = wibox.layout.fixed.horizontal,
-			s.mytasklist,
-		},
-		{ -- Right widgets
-			layout = wibox.layout.fixed.horizontal,
-			--container_temp_widget,
-			container_storage_widget,
-			--container_cpu_widget,
-			--container_mem_widget,
-			container_brightness_widget,
-			container_vol_widget,
-			container_battery_widget,
-			container_clock_widget,
-			layoutbox,
-		},
+		top = 0, -- don't forget to increase wibar height
+		color = "#80aa80",
+		widget = wibox.container.margin,
 	}
 end)
 -- }}}
