@@ -19,13 +19,14 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font         = "Roboto Mono Nerd Font 10"
+theme.font         = "Roboto Mono Nerd Font 9.5"
 theme.taglist_font = "Roboto Mono Nerd Font 10"
+theme.tasklist_font = "Roboto Mono Nerd Font 9"
 
-theme.bg_normal    = "#1e2030"
-theme.bg_focus    = "#1e2030"
-theme.bg_urgent   = "#1e2030"
-theme.bg_minimize = "#1e2030"
+theme.bg_normal    = "#1e1e2e"
+theme.bg_focus    = "#1e1e2e"
+theme.bg_urgent   = "#1e1e2e"
+theme.bg_minimize = "#1e1e2e"
 theme.bg_systray  = theme.bg_normal
 
 theme.fg_normal   = "#7f849c"
@@ -34,9 +35,9 @@ theme.fg_urgent   = "#f38ba8"
 theme.fg_minimize = "#ffffff"
 
 theme.useless_gap   = dpi(6)
-theme.border_width  = dpi(3)
-theme.border_normal = "#45475a"
-theme.border_focus  = "#7f849c"
+theme.border_width  = dpi(2)
+theme.border_normal = "#313244"
+theme.border_focus  = "#b4befe"
 
 
 
@@ -116,7 +117,7 @@ theme.titlebar_maximized_button_focus_inactive  = themes_path .. "default/titleb
 theme.titlebar_maximized_button_normal_active   = themes_path .. "default/titlebar/maximized_normal_active.png"
 theme.titlebar_maximized_button_focus_active    = themes_path .. "default/titlebar/maximized_focus_active.png"
 
-theme.wallpaper = "/home/sv/data/walls/z8cf1suptb6a1.jpg"
+theme.wallpaper = "/home/sv/data/walls/z8cf1suptb6a1.png"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh      = themes_path .. "default/layouts/fairhw.png"
