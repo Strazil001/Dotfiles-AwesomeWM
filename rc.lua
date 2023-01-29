@@ -567,7 +567,7 @@ container_clock_widget = {
       widget = wibox.container.margin
     },
     shape  = gears.shape.rounded_bar,
-    fg     = "#b4befe",
+    fg     = "#cba6f7",
     bg     = widget_bg,
     widget = wibox.container.background
   },
@@ -631,12 +631,15 @@ awful.screen.connect_for_each_screen(function(s)
     -- not a widget instance.
     widget_template = {
       {
-
         {
           {
+            -- {
+            --   id     = 'icon_role',
+            --   widget = wibox.widget.imagebox,
+            -- },
             {
-              id     = "text_role",
-              font = "JetBrainsMono Nerd Font 9",
+              id     = 'text_role',
+              font   = "Roboto Mono Nerd Font 8",
               widget = wibox.widget.textbox,
             },
             layout = wibox.layout.fixed.horizontal,
@@ -661,7 +664,7 @@ awful.screen.connect_for_each_screen(function(s)
   }
 
   -- Create the wibox
-  s.mywibox = awful.wibar({ position = "top", border_width = 0, border_color = "#00000000", height = 30,
+  s.mywibox = awful.wibar({ position = "top", border_width = 0, border_color = "#00000000", height = 28,
     input_passthrough = true, screen = s })
 
 
@@ -761,7 +764,7 @@ globalkeys = gears.table.join(
     { description = "open qutebrowser", group = "launcher" }),
   awful.key({ modkey }, "s",
     function()
-      awful.spawn("scrot -q 100 -d 1 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png")
+      awful.spawn("scrot -q 100 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png")
       naughty.notify {
         title = " ",
         fg = "#8293ce",
