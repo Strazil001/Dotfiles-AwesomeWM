@@ -31,7 +31,7 @@ local get_taglist = function(s)
 	local empty_icon = " "
 	local empty_color = "#585b70"
 
-	local focus_icon = " "
+	local focus_icon = " "
 	local focus_color = "#7f849c"
 
 	----------------------------------------------------------------------
@@ -59,7 +59,7 @@ local get_taglist = function(s)
 		layout = { spacing = 0, layout = wibox.layout.fixed.horizontal },
 		widget_template = {
 			{
-				{ id = 'icon_role', font = "JetBrainsMono Nerd Font 13", widget = wibox.widget.textbox },
+				{ id = 'icon_role', font = "JetBrainsMono Nerd Font 12", widget = wibox.widget.textbox },
 				id = 'margin_role',
 				top = dpi(0),
 				bottom = dpi(0),

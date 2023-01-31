@@ -21,7 +21,7 @@ require("awful.hotkeys_popup.keys")
 
 local theme = require("theme")
 
-awful.spawn.with_shell("~/.config/awesome/autorun.sh")
+--awful.spawn.with_shell("~/.config/awesome/autorun.sh")
 
 -- Error handling {{{
 -- Check if awesome encountered an error during startup and fell back to
@@ -51,7 +51,7 @@ end
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 --beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
-beautiful.init("/home/sv/.config/awesome/theme.lua")
+beautiful.init("/home/stevevdv/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "kitty"
@@ -209,7 +209,7 @@ local storage_root = awful.widget.watch('bash -c "df -h | awk \'NR==4 {print $4}
   update_storage_root(st_root)
 end)
 
-local storage_home = awful.widget.watch('/home/sv/scripts/disk-usage.sh', 60, function(self, stdout)
+local storage_home = awful.widget.watch('/home/stevevdv/Scripts/Scripts-AwesomeWM/disk-usage.sh', 60, function(self, stdout)
   st_home = stdout
   update_storage_home(st_home)
 end)
@@ -219,16 +219,16 @@ container_storage_widget = {
     {
       {
         {
-          {
+          --{
             widget = storage_widget_root,
-          },
-          {
-            widget = storage_widget_home,
-          },
-          layout = wibox.layout.flex.horizontal
+          --},
+          --{
+          --  widget = storage_widget_home,
+          --},
+          --layout = wibox.layout.flex.horizontal
         },
         left   = 0,
-        right  = 5,
+        right  = 0,
         top    = 0,
         bottom = 0,
         widget = wibox.container.margin
@@ -236,16 +236,14 @@ container_storage_widget = {
       shape        = gears.shape.rounded_bar,
       fg           = "#b4befe",
       bg           = widget_bg,
-      forced_width = 125,
       widget       = wibox.container.background
     },
     left   = 10,
-    right  = 0,
+    right  = 10,
     top    = 0,
     bottom = 0,
     widget = wibox.container.margin
   },
-  spacing = 5,
   layout  = wibox.layout.fixed.horizontal,
 }
 
@@ -383,7 +381,7 @@ local update_brightness_widget = function(brightness)
   brightness_widget.text = "  " .. brightness
 end
 
-local br, br_signal = awful.widget.watch('/home/sv/scripts/brightness-bar.sh', 60, function(self, stdout)
+local br, br_signal = awful.widget.watch('/home/stevevdv/Scripts/Scripts-AwesomeWM/brightness-bar.sh', 60, function(self, stdout)
   local brightness = stdout
   update_brightness_widget(brightness)
 end)
@@ -423,7 +421,7 @@ local update_vol_widget = function(vol)
   vol_widget.text = "  " .. vol
 end
 
-local vo, vo_signal = awful.widget.watch('/home/sv/scripts/volume-bar.sh', 60, function(self, stdout)
+local vo, vo_signal = awful.widget.watch('/home/stevevdv/Scripts/Scripts-AwesomeWM/volume-bar.sh', 60, function(self, stdout)
   local vol = stdout
   update_vol_widget(vol)
 end)
@@ -539,14 +537,14 @@ container_battery_widget = {
 container_arch_widget = {
   {
     {
-      text = "  ",
-      font = "JetBrainsMono Nerd Font 15",
+      text = "  ",
+      font = "JetBrainsMono Nerd Font 11",
       widget = wibox.widget.textbox,
     },
     left   = 0,
     right  = 5,
     top    = 2,
-    bottom = 2,
+    bottom = 3,
     widget = wibox.container.margin
   },
   fg     = "#fab387",
@@ -602,8 +600,8 @@ awful.screen.connect_for_each_screen(function(s)
 
   local layoutbox = wibox.widget({
     s.mylayoutbox,
-    top    = 5,
-    bottom = 6,
+    top    = 4,
+    bottom = 5,
     left   = 5,
     right  = 10,
     widget = wibox.container.margin,
@@ -664,7 +662,7 @@ awful.screen.connect_for_each_screen(function(s)
   }
 
   -- Create the wibox
-  s.mywibox = awful.wibar({ position = "top", border_width = 0, border_color = "#00000000", height = 28,
+  s.mywibox = awful.wibar({ position = "top", border_width = 0, border_color = "#00000000", height = 26,
     input_passthrough = true, screen = s })
 
 
@@ -858,7 +856,7 @@ globalkeys = gears.table.join(
   awful.key({}, "XF86MonBrightnessUp",
     function()
       --local brightness = [[/home/sv/scripts/brightness-bar.sh]]
-      awful.spawn("/home/sv/scripts/brightness-up.sh")
+      awful.spawn("/home/stevevdv/Scripts/Scripts-AwesomeWM/brightness-up.sh")
       br_signal:emit_signal("timeout")
       --awful.spawn.easy_async(brightness, function(stdout)
       --	naughty.notify {
@@ -882,7 +880,7 @@ globalkeys = gears.table.join(
   awful.key({}, "XF86MonBrightnessDown",
     function()
       --local brightness = [[/home/sv/scripts/brightness-bar.sh]]
-      awful.spawn("/home/sv/scripts/brightness-down.sh")
+      awful.spawn("/home/stevevdv/Scripts/Scripts-AwesomeWM/brightness-down.sh")
       br_signal:emit_signal("timeout")
       --awful.spawn.easy_async(brightness, function(stdout)
       --	naughty.notify {
