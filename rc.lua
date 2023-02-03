@@ -542,12 +542,12 @@ container_arch_widget = {
       widget = wibox.widget.textbox,
     },
     left   = 0,
-    right  = 5,
+    right  = 12,
     top    = 2,
     bottom = 3,
     widget = wibox.container.margin
   },
-  fg     = "#fab387",
+  fg     = "#b4befe",
   widget = wibox.container.background
 }
 
@@ -637,15 +637,15 @@ awful.screen.connect_for_each_screen(function(s)
             -- },
             {
               id     = 'text_role',
-              font   = "Roboto Mono Nerd Font 8",
+              font   = "JetBrainsMono Nerd Font 8",
               widget = wibox.widget.textbox,
             },
             layout = wibox.layout.fixed.horizontal,
           },
-          left   = 5,
+          left   = 12,
           right  = 5,
           top    = 0,
-          bottom = 0,
+          bottom = 2,
           widget = wibox.container.margin
         },
         fg     = widget_fg,
@@ -762,7 +762,7 @@ globalkeys = gears.table.join(
     { description = "open qutebrowser", group = "launcher" }),
   awful.key({ modkey }, "s",
     function()
-      awful.spawn("scrot -q 100 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png")
+      awful.spawn("scrot -q 100 /home/stevevdv/Pictures/Screenshots/%Y-%m-%d_$wx$h.png")
       naughty.notify {
         title = " ",
         fg = "#8293ce",
@@ -784,7 +784,7 @@ globalkeys = gears.table.join(
     end,
     { description = "Take screenshot fullscreen", group = "screen" }),
   awful.key({ modkey, "Shift" }, "s",
-    function() awful.spawn("scrot -s -q 100 /home/sv/pictures/screenshots/%Y-%m-%d_$wx$h.png") end,
+    function() awful.spawn("scrot -s -q 100 /home/stevevdv/Pictures/Screenshots/%Y-%m-%d_$wx$h.png") end,
     { description = "Take screenshot selection", group = "screen" }),
   awful.key({ modkey, "Control" }, "r", awesome.restart,
     { description = "reload awesome", group = "awesome" }),
@@ -904,7 +904,7 @@ globalkeys = gears.table.join(
   awful.key({}, "XF86AudioRaiseVolume",
     function()
       --local volume = [[/home/sv/scripts/volume-bar.sh]]
-      awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
+      awful.spawn("/home/stevevdv/Scripts/Scripts-AwesomeWM/volume-up.sh")
       vo_signal:emit_signal("timeout")
       --awful.spawn.easy_async(volume, function(stdout)
       --	naughty.notify {
@@ -922,13 +922,13 @@ globalkeys = gears.table.join(
       --	}
       --end)
     end,
-    { description = "Brightness up", group = "system" }),
+    { description = "Volume up", group = "system" }),
 
   -- Volume down
   awful.key({}, "XF86AudioLowerVolume",
     function()
       --local volume = [[/home/sv/scripts/volume-bar.sh]]
-      awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
+      awful.spawn("/home/stevevdv/Scripts/Scripts-AwesomeWM/volume-down.sh")
       vo_signal:emit_signal("timeout")
       --awful.spawn.easy_async(volume, function(stdout)
       --	naughty.notify {
@@ -946,7 +946,7 @@ globalkeys = gears.table.join(
       --	}
       --end)
     end,
-    { description = "Brightness down", group = "system" })
+    { description = "Volume down", group = "system" })
 
 )
 
@@ -1086,10 +1086,12 @@ awful.rules.rules = {
       "DTA", -- Firefox addon DownThemAll.
       "copyq", -- Includes session name in class.
       "pinentry",
+      "pavucontrol",
     },
     class = {
       "Arandr",
       "Blueman-manager",
+      "pavucontrol",
       "Gpick",
       "Kruler",
       "MessageWin", -- kalarm.
